@@ -1,55 +1,84 @@
-import React, { Component } from 'react';
-import { Text, View, StyleSheet } from 'react-native';
-import { Constants } from 'expo';
-
-class OnlyUpdateOnEvens extends Component {
-  shouldComponentUpdate(nextProps) {
-    return !(nextProps.count % 2)
-  }
-  
-  componentDidUpdate() {
-    console.log(this.props.count)
-  }
-  
-  render() {
-    return <Text>{this.props.count}</Text>
-  }
-}
-
-class Counter extends Component {
-  state = {
-    count: 0,
-  }
-  
-  componentDidMount() {
-    this.timer = setInterval(this.incrementCount, 500)
-  }
-  
-  incrementCount = () => {
-    this.setState(prevState => ({count: prevState.count + 1}))
-  }
-  
-  render() {
-    return <OnlyUpdateOnEvens count={this.state.count} />
-  }
-}
-
-export default class App extends Component {
-  render() {
-    return (
-      <View style={styles.container}>
-        <Counter />
-      </View>
-    );
-  }
-}
+import React from 'react';
+import {View, Button, Text, StyleSheet} from 'react-native'
 
 const styles = StyleSheet.create({
-  container: {
+  appContainer: {
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    paddingTop: Constants.statusBarHeight,
-    backgroundColor: '#ecf0f1',
   },
-});
+  count: {
+    fontSize: 48,
+  }
+})
+
+class Counter extends React.Component {
+  constructor() {
+    super()
+    this.state = {
+      count: 0,
+    }
+  }
+  
+  componentDidMount() {
+    this.interval = setInterval(this.inc, 1000)
+  }
+  
+  componentWillUnmount() {
+    clearInterval(this.interval)
+  }
+  
+  inc = () => {
+    console.log('increment!')
+    this.setState(prevState => ({
+      count: prevState.count + 1,
+    }))
+  }
+
+  render() {
+    return (
+      <Text style={styles.count}>{this.state.count} </Text>
+    )
+  }
+}
+
+export default class App extends React.Component {
+  constructor(props) {
+    super(props)
+    this.state = {
+      showCounter: true,
+    }
+  }
+  
+  toggleCounter = () => this.setState(prevState => ({
+    showCounter: !prevState.showCounter,
+  }))
+
+  // this was the render() code originally written in lecture
+  render() {
+    if (this.state.showCounter) {
+      return (
+        <View style={styles.appContainer}>
+          <Button title="toggle" onPress={this.toggleCounter} />
+          <Counter />
+        </View>
+      )
+    } else {
+      return (
+        <View style={styles.appContainer}>
+          <Button title="toggle" onPress={this.toggleCounter} />
+        </View>
+      )
+    }
+  }
+
+  // this is a more concise version with the same functionality
+  render() {
+    return (
+      <View style={styles.appContainer}>
+        <Button title="toggle" onPress={this.toggleCounter} />
+        {this.state.showCounter && <Counter />}
+      </View>
+    )
+  }
+}
