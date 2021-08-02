@@ -2,13 +2,27 @@ import React, { Component } from 'react';
 import { Text, View, StyleSheet } from 'react-native';
 import { Constants } from 'expo';
 
+class OnlyUpdateOnEvens extends Component {
+  shouldComponentUpdate(nextProps) {
+    return !(nextProps.count % 2)
+  }
+  
+  componentDidUpdate() {
+    console.log(this.props.count)
+  }
+  
+  render() {
+    return <Text>{this.props.count}</Text>
+  }
+}
+
 class Counter extends Component {
   state = {
     count: 0,
   }
   
   componentDidMount() {
-    this.timer = setInterval(this.incrementCount, 1000)
+    this.timer = setInterval(this.incrementCount, 500)
   }
   
   incrementCount = () => {
@@ -16,7 +30,7 @@ class Counter extends Component {
   }
   
   render() {
-    return <Text>{this.state.count}</Text>
+    return <OnlyUpdateOnEvens count={this.state.count} />
   }
 }
 
@@ -39,4 +53,3 @@ const styles = StyleSheet.create({
     backgroundColor: '#ecf0f1',
   },
 });
-
